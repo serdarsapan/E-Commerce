@@ -10,14 +10,16 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-    public function products(Request $request)
+    public function products(Request $request,$slug=null)
     {
-
-
+        $item = request()->segment(1) ?? null;
         $size = $request->size ?? null;
         $color = $request->color ?? null;
         $startPrice = $request->start_price ?? null;
         $endPrice = $request->end_price ?? null;
+        $order = $request->order ?? 'id';
+        $short = $request->short ?? 'desc';
+
 
 
     $products = Products::where('status','1')->select(['id','name','slug','size','color','price','category_id','thumbnail'])
@@ -34,7 +36,12 @@ class PageController extends Controller
 
             return $query;
         })
-        ->with('item:id,name,slug');
+        ->with('item:id,name,slug')
+        ->whereHas('item',function($query) use($item,$slug) {
+            if (!empty($slug)) {
+                $query->where('slug', $slug);
+            }
+        });
 
             $minPrice = $products->min('price');
             $maxPrice = $products->max('price');
@@ -43,16 +50,22 @@ class PageController extends Controller
 
             $colors = Products::where('status','1')->groupBy('color')->pluck('color')->toArray();
 
-        $products = $products->paginate(1);
 
-        $categories = Category::where('status','1')->where('cat_ust', null)->withCount('items')->get();
-    return view('frontend.pages.products', compact('products','categories','minPrice','maxPrice','sizeLists','colors'));
+        $products = $products->orderBy($order,$short)->paginate(20);
+
+    return view('frontend.pages.products', compact('products','minPrice','maxPrice','sizeLists','colors'));
     }
 
     public function proDetail($slug)
     {
-    $products = Products::where('slug', $slug)->first();
-    return view('frontend.pages.proDetail', compact('products'));
+    $products = Products::where('slug', $slug)->where('status','1')->firstOrFail();
+
+        $product = Products::where('id','!=',$products->id)
+            ->where('category_id',$products->category_id)
+            ->where('status', '1')
+            ->limit(5)
+            ->get();
+    return view('frontend.pages.proDetail', compact('products','product'));
     }
     public function aboutUs()
     {

@@ -22,11 +22,11 @@ Route::group(['middleware'=>'site.setting'], function (){
 
     Route::get('/products', [PageController::class, 'products'])->name('products');
 
-    Route::get('/products/men', [PageController::class, 'products'])->name('men');
+    Route::get('/products/men/{slug?}', [PageController::class, 'products'])->name('men');
 
-    Route::get('/products/women', [PageController::class, 'products'])->name('women');
+    Route::get('/products/women/{slug?}', [PageController::class, 'products'])->name('women');
 
-    Route::get('/products/kids', [PageController::class, 'products'])->name('kids');
+    Route::get('/products/kids/{slug?}', [PageController::class, 'products'])->name('kids');
 
     Route::get('/products/{slug}', [PageController::class, 'proDetail'])->name('proDetail');
 

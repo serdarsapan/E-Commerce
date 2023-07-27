@@ -47,8 +47,11 @@
                 <ul class="dropdown">
 
                     @if(!empty($categories) && $categories->count() > 0)
-                        @foreach($categories as $category)
-                            <li><a href="#">{{ $category->name }}</a></li>
+                        @php
+                        $allCategories = collect($categories);
+                        @endphp
+                        @foreach($allCategories->where('cat_ust', null) as $category)
+                            <li><a href="{{ route('products',$category->slug) }}">{{ $category->name }}</a></li>
                         @endforeach
                     @endif
 
