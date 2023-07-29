@@ -2,7 +2,6 @@
     <div class="site-navbar-top">
         <div class="container">
             <div class="row align-items-center">
-
                 <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
                     <form action="" class="site-block-top-search">
                         <span class="icon icon-search2"></span>
@@ -47,11 +46,15 @@
                 <ul class="dropdown">
 
                     @if(!empty($categories) && $categories->count() > 0)
-                        @php
-                        $allCategories = collect($categories);
-                        @endphp
-                        @foreach($allCategories->where('cat_ust', null) as $category)
-                            <li><a href="{{ route('products',$category->slug) }}">{{ $category->name }}</a></li>
+                        @foreach($categories->where('cat_ust', null) as $category)
+                            <li class="has-children">
+                                <a href="{{ route('products',$category->slug) }}">{{ $category->name }}</a>
+                                <ul class="dropdown">
+                                    @foreach($category->subCategory as $subCategory)
+                                            <li><a href="{{ route('products',$category->slug,$subCategory->slug) }}">{{ $subCategory->name }}</a></li>
+                                    @endforeach
+                                </ul>
+                            </li>
                         @endforeach
                     @endif
 

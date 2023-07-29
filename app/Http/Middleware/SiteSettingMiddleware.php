@@ -20,7 +20,7 @@ class SiteSettingMiddleware
 
         $settings = SiteSetting::pluck('data','name')->toArray();
 
-        $categories = Category::where('status','1')->withCount('items')->get();
+        $categories = Category::where('status','1')->with('subCategory')->withCount('items')->get();
 
         view()->share(['settings'=>$settings, 'categories'=>$categories]);
 

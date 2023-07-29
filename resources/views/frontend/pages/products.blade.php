@@ -59,6 +59,7 @@
                                                 <h3><a href="{{ route('proDetail', $product->slug) }}">{{ $product->name }}</a></h3>
                                                 <p class="mb-0">{{ $product->short_text }}</p>
                                                 <p class="text-primary font-weight-bold">${{ $product->price }}</p>
+                                                <p><a href="{{ 'cart' }}" class="buy-now btn btn-sm btn-primary">Add To Cart</a></p>
                                             </div>
                                         </div>
                                     </div>
@@ -106,7 +107,7 @@
                                 @if(!empty($colors))
                                     @foreach($colors as $color)
                                         <a href="#" class="d-flex color-item align-items-center" >
-                                            <span class="bg-light color d-inline-block rounded-circle mr-2"></span> <span class="text-black">{{ $color }}</span>
+                                            <span class="bg-danger color d-inline-block rounded-circle mr-2"></span> <span class="text-black">{{ $color }}</span>
                                         </a>
                                     @endforeach
                                 @endif

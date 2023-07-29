@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Frontend\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Frontend\PageHomeController;
 use App\Http\Controllers\Frontend\PageController;
@@ -37,7 +38,8 @@ Route::group(['middleware'=>'site.setting'], function (){
 
     Route::post('contact', [AjaxController::class, 'contactSave'])->name('contactSave');
 
-    Route::get('/cart', [PageController::class, 'cart'])->name('cart');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 
     Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 
