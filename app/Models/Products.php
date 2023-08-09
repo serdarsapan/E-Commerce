@@ -18,6 +18,7 @@ class Products extends Model
         'image',
         'thumbnail',
         'category_id',
+        'category_name',
         'short_text',
         'price',
         'size',

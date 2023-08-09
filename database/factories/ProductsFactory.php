@@ -17,6 +17,7 @@ class ProductsFactory extends Factory
     public function definition(): array
     {
         $categoryId = [1,2,3,4,5,6];
+        $categoryName = ['Men','Women','Kids'];
         $sizeList = ['Medium','Large','X-Large'];
         $color = ['White','Black','Green','Blue'];
 
@@ -25,6 +26,7 @@ class ProductsFactory extends Factory
         return [
             'name' => $colorText.' '.$sizeText.' '.'Product',
             'category_id' => $categoryId[random_int(0,5)],
+            'category_name' => $categoryName[random_int(0,2)],
             'short_text' => 'Short Text Section',
             'price' => random_int(20,100),
             'size' => $sizeText,

@@ -18,7 +18,7 @@ class CategorySeeder extends Seeder
             'thumbnail'=> null,
             'name'=>'Men',
             'content'=>'Men Clothes',
-            'cat_ust'=> null,
+            'parent'=> null,
             'status'=>'1'
         ]);
 
@@ -27,7 +27,7 @@ class CategorySeeder extends Seeder
             'thumbnail'=> null,
             'name'=>'Men Shirts',
             'content'=>'Men Shirts',
-            'cat_ust'=> $men->id,
+            'parent'=> $men->id,
             'status'=>'1'
         ]);
 
@@ -36,7 +36,7 @@ class CategorySeeder extends Seeder
             'thumbnail'=> null,
             'name'=>'Women',
             'content'=>'Women Clothes',
-            'cat_ust'=> null,
+            'parent'=> null,
             'status'=>'1'
         ]);
 
@@ -45,7 +45,7 @@ class CategorySeeder extends Seeder
             'thumbnail'=> null,
             'name'=>'Women Dresses',
             'content'=>'Women Dresses',
-            'cat_ust'=> $women->id,
+            'parent'=> $women->id,
             'status'=>'1'
         ]);
 
@@ -54,7 +54,7 @@ class CategorySeeder extends Seeder
             'thumbnail'=> null,
             'name'=>'Kids',
             'content'=>'Kids Clothes',
-            'cat_ust'=> null,
+            'parent'=> null,
             'status'=>'1'
         ]);
 
@@ -63,7 +63,7 @@ class CategorySeeder extends Seeder
             'thumbnail'=> null,
             'name'=>'Kids Pants/Jeans',
             'content'=>'Kids Pants/Jeans',
-            'cat_ust'=> $kids->id,
+            'parent'=> $kids->id,
             'status'=>'1'
         ]);
     }

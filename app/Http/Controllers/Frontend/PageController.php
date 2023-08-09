@@ -20,28 +20,34 @@ class PageController extends Controller
         $order = $request->order ?? 'id';
         $sort = $request->sort ?? 'desc';
 
+        $categoryId = '';
+        $category = $request->get('category');
+        if ($category) {
+            $categoryId = Category::whereSlug($category)->value('id');
+        }
 
+        $products = Products::query()
+            ->where('status','1')
+            ->when($size, function($query,$size) {
+                return $query->where('size',$size);
+            })
+            ->when($color, function($query,$color) {
+                return $query->where('color',$color);
+            })->when($categoryId, function ($query, $categoryId) {
+                return $query->where('category_id', $categoryId);
+            })
+            ->when($startPrice && $endPrice, function ($query) use ($startPrice,$endPrice) {
+                return $query->whereBetween('price', [$startPrice, $endPrice]);
+            })
+            ->with('item:id,name,slug')
+            ->whereHas('item',function ($query) use($item, $slug) {
+                if (!empty($slug)) {
+                    $query->where('slug', $slug);
+                }
+            })
+            ->orderBy($order, $sort)
+            ->paginate(21);
 
-    $products = Products::where('status','1')->select(['id','name','slug','size','color','price','category_id','thumbnail'])
-        ->where(function($query) use($size,$color,$startPrice,$endPrice) {
-            if (!empty($size)) {
-                $query->where('size',$size);
-            }
-            if (!empty($color)) {
-                $query->where('color',$color);
-            }
-            if (!empty($startPrice && $endPrice)) {
-                $query->whereBetween('price',[$startPrice,$endPrice]);
-            }
-
-            return $query;
-        })
-        ->with('item:id,name,slug')
-        ->whereHas('item',function($query) use($item,$slug) {
-            if (!empty($slug)) {
-                $query->where('slug', $slug);
-            }
-        });
 
             $minPrice = $products->min('price');
             $maxPrice = $products->max('price');
@@ -50,23 +56,25 @@ class PageController extends Controller
 
             $colors = Products::where('status','1')->groupBy('color')->pluck('color')->toArray();
 
-
-        $products = $products->orderBy($order,$sort)->paginate(20);
-
     return view('frontend.pages.products', compact('products','minPrice','maxPrice','sizeLists','colors'));
     }
 
     public function proDetail($slug)
     {
-    $products = Products::where('slug', $slug)->where('status','1')->firstOrFail();
+    $product = Products::where('slug', $slug)->where('status','1')->firstOrFail();
+    $featureProducts = $this->featureProducts($product,5);
 
-        $product = Products::where('id','!=',$products->id)
-            ->where('category_id',$products->category_id)
-            ->where('status', '1')
-            ->limit(5)
-            ->get();
-    return view('frontend.pages.proDetail', compact('products','product'));
+    return view('frontend.pages.proDetail', compact('product','featureProducts'));
     }
+    public function featureProducts($product,$limit)
+    {
+        return Products::where('id','!=',$product->id)
+            ->where('category_id',$product->category_id)
+            ->where('status', '1')
+            ->limit($limit)
+            ->get();
+    }
+
     public function aboutUs()
     {
         $marketing = About::where('title','marketing')->first();

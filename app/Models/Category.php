@@ -8,7 +8,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 
 class Category extends Model
 {
-    use Sluggable;
+    use Sluggable,HasFactory;
 
     protected $fillable = [
         'image',
@@ -16,7 +16,7 @@ class Category extends Model
         'name',
         'slug',
         'content',
-        'cat_ust',
+        'parent',
         'status',
     ];
 
@@ -27,7 +27,7 @@ class Category extends Model
 
     public function subCategory()
     {
-        return $this->hasMany(Category::class, 'cat_ust','id');
+        return $this->hasMany(Category::class, 'parent','id');
     }
 
     public function sluggable(): array

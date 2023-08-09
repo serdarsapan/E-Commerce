@@ -13,29 +13,39 @@
     <div class="site-section">
         <div class="container">
             <div class="row">
+                <div class="col-lg-12">
+                    @if(session()->get('success'))
+                        <div class="alert alert-success">{{ session()->get('success') }}</div>
+                    @endif
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-6">
-                    <img src="{{ $products->thumbnail }}" alt="Image" class="img-fluid">
+                    <img src="{{ $product->thumbnail }}" alt="Image" class="img-fluid">
                 </div>
                 <div class="col-md-6">
-                    <h2 class="text-black">{{ $products->name }}</h2>
-                    <p>{{ $products->content }}</p>
+                    <h2 class="text-black">{{ $product->name }}</h2>
+                    <p>{{ $product->content }}</p>
 
-                    <p><strong class="text-primary h4">$ {{ $products->price,2 }}</strong></p>
+                    <p><strong class="text-primary h4">$ {{ $product->price,2 }}</strong></p>
                     <form action="{{ route('cart.add') }}" method="POST">
                         @csrf
-                        <input type="hidden" name="product_id" value="{{ $products->id }}">
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
                     <div class="mb-1 d-flex">
+
+
+
                         <label for="option-md" class="d-flex mr-3 mb-3">
-                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;"><input type="radio" id="option-md" name="size" value="medium"></span> <span class="d-inline-block text-black">Medium</span>
+                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;"><input type="radio" id="option-md" name="size" value="Medium"></span> <span class="d-inline-block text-black">Medium</span>
                         </label>
                         <label for="option-lg" class="d-flex mr-3 mb-3">
-                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;"><input type="radio" id="option-lg" name="size" value="large"></span> <span class="d-inline-block text-black">Large</span>
+                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;"><input type="radio" id="option-lg" name="size" value="Large"></span> <span class="d-inline-block text-black">Large</span>
                         </label>
                         <label for="option-xl" class="d-flex mr-3 mb-3">
-                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;"><input type="radio" id="option-xl" name="size" value="x-large"></span> <span class="d-inline-block text-black">X-Large</span>
+                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;"><input type="radio" id="option-xl" name="size" value="X-Large"></span> <span class="d-inline-block text-black">X-Large</span>
                         </label>
                     </div>
-                    </form>
+
 
                     <div class="mb-5">
                         <div class="input-group mb-3" style="max-width: 120px;">
@@ -49,8 +59,8 @@
                         </div>
 
                     </div>
-                    <p><a href="{{ route('cart.add') }}" class="buy-now btn btn-sm btn-primary">Add To Cart</a></p>
-
+                    <p><button type="submit" class="buy-now btn btn-sm btn-primary">Add To Cart</button></p>
+                    </form>
                 </div>
             </div>
         </div>
@@ -66,8 +76,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="nonloop-block-3 owl-carousel">
-                        @if(!empty($product) && $product->count() > 0)
-                            @foreach($product as $item)
+                        @if(!empty($cartItems) && $cartItems->count() > 0)
+                            @foreach($cartItems as $item)
                                 <div class="item">
                                     <div class="block-4 text-center">
                                         <figure class="block-4-image">

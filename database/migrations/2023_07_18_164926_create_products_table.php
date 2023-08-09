@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('thumbnail')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
+            $table->string('category_name')->nullable();
             $table->text('short_text')->nullable();
             $table->double('price',8,2)->nullable();
             $table->string('size')->nullable();

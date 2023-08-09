@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\Frontend\CartController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Frontend\PageHomeController;
-use App\Http\Controllers\Frontend\PageController;
+
 use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\Frontend\PageController;
+use App\Http\Controllers\Frontend\PageHomeController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,11 +24,11 @@ Route::group(['middleware'=>'site.setting'], function (){
 
     Route::get('/products', [PageController::class, 'products'])->name('products');
 
-    Route::get('/products/men/{slug?}', [PageController::class, 'products'])->name('men');
+    Route::get('/products/men/', [PageController::class, 'products'])->name('men');
 
-    Route::get('/products/women/{slug?}', [PageController::class, 'products'])->name('women');
+    Route::get('/products/women/', [PageController::class, 'products'])->name('women');
 
-    Route::get('/products/kids/{slug?}', [PageController::class, 'products'])->name('kids');
+    Route::get('/products/kids/', [PageController::class, 'products'])->name('kids');
 
     Route::get('/products/{slug}', [PageController::class, 'proDetail'])->name('proDetail');
 
@@ -38,11 +39,13 @@ Route::group(['middleware'=>'site.setting'], function (){
 
     Route::post('contact', [AjaxController::class, 'contactSave'])->name('contactSave');
 
-    Route::get('/cart', [CartController::class, 'index'])->name('cart');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-
     Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 
     Route::get('/thankYou', [PageController::class, 'thankYou'])->name('thankYou');
 
+    Route::get('/cart', [CartController::class, 'index'])->name('cart');
+
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+
+    Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 });
