@@ -24,7 +24,7 @@ class SliderController extends Controller
      */
     public function create()
     {
-        return view('backend.pages.slider.create');
+        return view('backend.pages.slider.edit');
     }
 
     /**
@@ -41,11 +41,11 @@ class SliderController extends Controller
         }
 
         Slider::create([
+            'image'=>$fileName,
             'name'=>$request->name,
             'content'=>$request->content,
             'link'=>$request->link,
             'status'=>$request->status,
-            'image'=>$fileName,
         ]);
         return back()->withSuccess('Created Successfully!');
     }
