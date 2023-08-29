@@ -2,9 +2,11 @@
 
 
 use App\Http\Controllers\AjaxController;
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\CustomAuthController;
+use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\PageHomeController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -48,4 +50,9 @@ Route::group(['middleware'=>'site.setting'], function (){
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+
+    Auth::routes();
+    Route::get('/login',[CustomAuthController::class, 'login'])->name('login');
+
+    Route::get('/logout',[CustomAuthController::class, 'logouts'])->name('logouts');
 });
