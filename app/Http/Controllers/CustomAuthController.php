@@ -23,7 +23,7 @@ class CustomAuthController extends Controller
      */
     public function login()
     {
-        return view('/home');
+        return view('');
     }
 
     public function logouts()

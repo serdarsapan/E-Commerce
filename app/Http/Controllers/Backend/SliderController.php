@@ -7,6 +7,7 @@ use App\Http\Requests\SliderRequest;
 use App\Models\Slider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use ImageResize;
 
 class SliderController extends Controller
 {
@@ -34,14 +35,26 @@ class SliderController extends Controller
     {
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $fileName = time().'-'.Str::slug($request->name);
             $extension = $image->getClientOriginalExtension();
+            $fileName = '-'.Str::slug($request->name);
+            $upFile = 'img/slider';
 
-            $image->move(public_path('img/slider/'),$fileName.'.'.$extension);
+            if ($extension == 'pdf' || $extension == 'svg' || $extension == 'webp' ) {
+
+                $image->move(public_path($upFile),$fileName.'.'.$extension);
+
+                $imageUrl = $upFile.$fileName.'.'.$extension;
+            }else{
+                $image = ImageResize::make($image);
+                $image->encode('webp', 75)->save($upFile.$fileName.'.webp');
+
+                $imageUrl = $upFile.$fileName.'.webp';
+            }
+
         }
 
         Slider::create([
-            'image'=>$fileName,
+            'image'=>$imageUrl,
             'name'=>$request->name,
             'content'=>$request->content,
             'link'=>$request->link,
@@ -72,7 +85,34 @@ class SliderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $extension = $image->getClientOriginalExtension();
+            $fileName = '-'.Str::slug($request->name);
+            $upFile = 'img/slider';
+
+            if ($extension == 'pdf' || $extension == 'svg' || $extension == 'webp' ) {
+
+                $image->move(public_path($upFile),$fileName.'.'.$extension);
+
+                $imageUrl = $upFile.$fileName.'.'.$extension;
+            }else{
+                $image = ImageResize::make($image);
+                $image->encode('webp', 75)->save($upFile.$fileName.'.webp');
+
+                $imageUrl = $upFile.$fileName.'.webp';
+            }
+
+        }
+
+        Slider::where('id',$id)->update([
+            'name'=>$request->name,
+            'content'=>$request->content,
+            'link'=>$request->link,
+            'status'=>$request->status,
+            'image'=>$imageUrl ?? null,
+        ]);
+        return back()->withSuccess('Updated Successfully!');
     }
 
     /**
@@ -80,7 +120,13 @@ class SliderController extends Controller
      */
     public function destroy(string $id)
     {
-        $delete = Slider::where('id', $id)->delete()->first();
-        return view('backend.pages.slider.index', compact('delete'));
+        $slider = Slider::where('id', $id)->firstOrFail();
+
+        if (file_exists(!empty($slider->image))) {
+                unlink($slider->image);
+        }
+
+        $slider->delete();
+        return back()->withSuccess('Deleted Successfully!');
     }
 }

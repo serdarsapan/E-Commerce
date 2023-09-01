@@ -8,6 +8,11 @@
                     <p class="card-description">
                         <a href="{{ route('dashboard.slider.create') }}" class="btn btn-github">Add Table</a>
                     </p>
+
+                    @if(session()->get('success'))
+                        <div class="alert alert-success">{{ session()->get('success') }}</div>
+                    @endif
+
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -29,12 +34,23 @@
                                         <td>{{ $slider->name }}</td>
                                         <td>{{ $slider->content ?? '' }}</td>
                                         <td>{{ $slider->link }}</td>
-                                        <td><label class="badge badge-{{ $slider->status == '1' ? 'success' : 'danger' }}">{{ $slider->status == '1' ? 'In Progress' : 'Pending' }}</label></td>
+                                        <td><label class="badge badge-{{ $slider->status == '1' ? 'success' : 'danger' }}">{{ $slider->status == '1' ? 'In Progress' : 'Pending' }}</label>
+
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" data-toggle="toggle">
+                                                    Option one is enabled
+                                                </label>
+                                            </div>
+
+                                        </td>
                                         <td><a href="{{ route('dashboard.slider.edit', $slider->id) }}" class="btn btn-primary">Edit</a></td>
                                         <td><form action="{{ route('dashboard.slider.destroy', $slider->id) }}" method="POST">
+                                                @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger">Delete</button>
-                                        </form></td>
+                                        </form>
+                                        </td>
                                     </tr>
                                 @endforeach
                             @endif
@@ -45,4 +61,13 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('customjs')
+    <script>
+        alertify
+            .alert("This is an alert dialog.", function(){
+                alertify.message('OK');
+            });
+    </script>
 @endsection

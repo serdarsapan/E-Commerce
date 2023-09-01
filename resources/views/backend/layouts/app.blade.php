@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="{{asset('backFiles')}}/vendors/feather/feather.css">
     <link rel="stylesheet" href="{{asset('backFiles')}}/vendors/ti-icons/css/themify-icons.css">
     <link rel="stylesheet" href="{{asset('backFiles')}}/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="{{asset('backFiles/css/bootstrap-toggle.min.css')}}">
+
+    <link rel="stylesheet" href="{{asset('backFiles')}}/css/themes_default.min.css">
+    <link rel="stylesheet" href="{{asset('backFiles')}}/css/alertify.min.css">
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="{{asset('backFiles')}}/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
@@ -334,9 +338,12 @@
 <!-- Custom js for this page-->
 <script src="{{asset('backFiles')}}/js/dashboard.js"></script>
 <script src="{{asset('backFiles')}}/js/Chart.roundedBarCharts.js"></script>
-
 <script src="{{asset('backFiles')}}/js/file-upload.js"></script>
+
+<script src="{{asset('backFiles')}}/js/bootstrap-toggle.min.js"></script>
+<script src="{{asset('backFiles')}}/js/build_alertify.min.js"></script>
 <!-- End custom js for this page-->
+@yield('customjs')
 </body>
 
 </html>

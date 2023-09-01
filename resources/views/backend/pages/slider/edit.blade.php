@@ -18,25 +18,43 @@
 
                     @if(!empty($slider->id))
                         @php
-                            $routeLink = route('dashboard.slider.edit',$slider->id);
+                            $routeLink = route('dashboard.slider.update',$slider->id);
                         @endphp
                     @else
                         @php
                             $routeLink = route('dashboard.slider.store');
                         @endphp
                     @endif
-                    <form method="POST" action="{{ $routeLink }}" class="forms-sample" enctype="multipart/form-data">
+                    <form action="{{ $routeLink }}" method="POST" class="forms-sample" enctype="multipart/form-data">
                         @csrf
                         @if(!empty($slider->id))
                             @method('PUT')
                         @endif
+
+                        <div class="form-group">
+                            <div class="input-group col-xs-12">
+                                <img src="{{ asset($slider->image ?? '') }}" alt="{{ $slider->name ?? '' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>File upload</label>
+                            <input type="file" name="image" class="file-upload-default">
+                            <div class="input-group col-xs-12">
+                                <input type="text" class="form-control file-upload-info" disabled placeholder="{{ $slider->image ?? 'Upload Image' }}">
+                                <span class="input-group-append">
+                          <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
+                        </span>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="title">Title</label>
                             <input type="text" class="form-control" id="name" name="name" value="{{ $slider->name ?? '' }}" placeholder="Title">
                         </div>
                         <div class="form-group">
                             <label for="catchword">CatchWord</label>
-                            <input type="text" class="form-control" id="content" name="content" value="{{ $slider->content ?? '' }}" placeholder="Catchword">
+                            <textarea class="form-control" name="content" id="catchword" cols="30" rows="1" placeholder="Catchword">{!! $slider->content ?? '' !!}</textarea>
                         </div>
                         <div class="form-group">
                             <label for="link">Link</label>
@@ -44,23 +62,14 @@
                         </div>
 
                         <div class="form-group">
-                            <label>File upload</label>
-                            <input type="file" name="image" class="file-upload-default">
-                            <div class="input-group col-xs-12">
-                                <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
-                                <span class="input-group-append">
-                          <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
-                        </span>
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label for="status">Status</label>
                             @php
                             $status = $slider->status ?? '';
                             @endphp
                             <select name="status" id="status">
-                                <option value="0" {{ $status == '0' ? 'selected' : '' }}>Pending</option>
                                 <option value="1" {{ $status == '1' ? 'selected' : '' }}>In Progress</option>
+                                <option value="0" {{ $status == '0' ? 'selected' : '' }}>Pending</option>
+
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
