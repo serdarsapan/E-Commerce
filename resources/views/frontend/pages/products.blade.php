@@ -34,14 +34,13 @@
                                         </div>
                                     </div>
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuReference" data-toggle="dropdown">Reference</button>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
-                                            <a class="dropdown-item" href="#" data-order="a_z_order">Name, A to Z</a>
-                                            <a class="dropdown-item" href="#" data-order="z_a_order">Name, Z to A</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#" data-order="price_min_order">Price, low to high</a>
-                                            <a class="dropdown-item" href="#" data-order="price_max_order">Price, high to low</a>
-                                        </div>
+                                        <select class="form-control" id="orderList">
+                                            <option class="dropdown-item">Reference</option>
+                                            <option class="dropdown-item" value="id-desc" data-order="a_z_order">Name, A to Z</option>
+                                            <option class="dropdown-item" value="id-asc" data-order="z_a_order">Name, Z to A</option>
+                                            <option class="dropdown-item" value="price-asc" data-order="price_min_order">Price, low to high</option>
+                                            <option class="dropdown-item" value="price-desc" data-order="price_max_order">Price, high to low</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -55,31 +54,9 @@
                             </div>
                         </div>
 
-                        <div class="row mb-5">
+                        <div class="row mb-5 productContent">
 
-                            @if(!empty($products) && $products->count() > 0)
-                                @foreach($products as $product)
-                                    <div class="col-sm-6 col-lg-4 mb-4" data-aos="fade-up">
-                                        <div class="block-4 text-center border">
-                                            <figure class="block-4-image">
-                                                <a href="{{ route('proDetail', $product->slug) }}"><img src="{{ asset($product->thumbnail) }}" alt="Image placeholder" class="img-fluid"></a>
-                                            </figure>
-                                            <div class="block-4-text p-4">
-                                                <h3><a href="{{ route('proDetail', $product->slug) }}">{{ $product->name }}</a></h3>
-                                                <p class="mb-0">{{ $product->short_text }}</p>
-                                                <p class="text-primary font-weight-bold">${{ $product->price }}</p>
-
-                                                <form action="{{ route('cart.add') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                                    <input type="hidden" name="size" value="{{ $product->size }}">
-                                                <button type="submit" class="buy-now btn btn-sm btn-primary">Add To Cart</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @endif
+                            @include('frontend.ajax.productList')
 
                         </div>
                         <div class="row" data-aos="fade-up">
@@ -91,11 +68,12 @@
                             <h3 class="mb-3 h6 text-uppercase text-black d-block">Categories</h3>
                             <ul class="list-unstyled mb-0">
                                 @if($categories->count() > 0)
-                                    @foreach($categories as $category)
+                                    @foreach($categories->where('parent', null) as $category)
                                         <li class="mb-1"><a href="{{ url('products? category='.$category->slug) }}" class="d-flex"><span>{{ $category->name }}</span> <span class="text-black ml-auto">({{ $category->items_count }})</span></a></li>
                                     @endforeach
 
                                 @endif
+
                             </ul>
                         </div>
 
@@ -103,15 +81,17 @@
                             <div class="mb-4">
                                 <h3 class="mb-3 h6 text-uppercase text-black d-block">Filter by Price</h3>
                                 <div id="slider-range" class="border-primary"></div>
-                                <input type="text" name="text" id="amount" class="form-control border-0 pl-0 bg-white" disabled="" />
+                                 <input type="text" name="text" id="amount" class="form-control border-0 pl-0 bg-white" disabled="" />
+
+                                <input type="text" name="text" id="priceBetween" disabled="" hidden />
                             </div>
 
                             <div class="mb-4">
                                 <h3 class="mb-3 h6 text-uppercase text-black d-block">Size</h3>
                                 @if(!empty($sizeLists))
-                                    @foreach($sizeLists as $sizeList)
-                                        <label for="s_sm" class="d-flex">
-                                            <input type="checkbox" id="s_sm" class="mr-2 mt-1"> <span class="text-black">{{ $sizeList }}</span>
+                                    @foreach($sizeLists as $key => $size)
+                                        <label for="size{{$key}}" class="d-flex">
+                                            <input type="checkbox" id="size{{$key}}" {{ isset(request()->size) && in_array($size,explode(',',request()->size)) ? 'checked' : '' }} class="mr-2 mt-1 sizeList" data-key="{{$size}}"> <span class="text-black">{{ $size }}</span>
                                         </label>
                                     @endforeach
                                 @endif
@@ -120,14 +100,16 @@
                             <div class="mb-4">
                                 <h3 class="mb-3 h6 text-uppercase text-black d-block">Color</h3>
                                 @if(!empty($colors))
-                                    @foreach($colors as $color)
-                                        <a href="#" class="d-flex color-item align-items-center" >
-                                            <span class="bg-danger color d-inline-block rounded-circle mr-2"></span> <span class="text-black">{{ $color }}</span>
-                                        </a>
+                                    @foreach($colors as $key => $color)
+                                        <label for="color{{$key}}" class="d-flex">
+                                            <input type="checkbox" id="color{{$key}}" {{ isset(request()->color) && in_array($color,explode(',',request()->color)) ? 'checked' : '' }} class="mr-2 mt-1 colorList" data-key="{{$color}}"> <span class="text-black">{{ $color }}</span>
+                                        </label>
                                     @endforeach
                                 @endif
                             </div>
-
+                            <div class="mb-4">
+                                <button class="btn btn-primary filterBtn">Filter</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -168,7 +150,77 @@
 @endsection
         @section('custom_js')
             <script>
-                var minPrice = "{{$minPrice}}";
                 var maxPrice = "{{$maxPrice}}";
+                var defaultMinPrice = "{{request()->min ?? 0 }}";
+                var defaultMaxPrice = "{{ request()->max ?? $maxPrice }}";
+
+                var url = new URL(window.location.href);
+
+                $(document).on('click','.filterBtn', function(e){
+                   filter();
+                });
+
+                function filter() {
+                    let colorList = $(".colorList:checked").map(function() {
+                        return $(this).data('key');
+                    }).get();
+                    let sizeList = $(".sizeList:checked").map(function() {
+                        return $(this).data('key');
+                    }).get();
+
+                    console.log('Color List Values:', colorList);
+                    console.log('Size List Values:', sizeList);
+
+                    if (colorList.length > 0) {
+                        url.searchParams.set("color", colorList.join(","))
+                    }else {
+                        url.searchParams.delete('color');
+                    }
+
+                    if (sizeList.length > 0) {
+                        url.searchParams.set("size", sizeList.join(","))
+                    }else {
+                        url.searchParams.delete('size');
+                    }
+
+                    var price = $('#priceBetween').val().split('-');
+                    url.searchParams.set("min", price[0])
+                    url.searchParams.set("max", price[1])
+
+                    newUrl = url.href;
+                    window.history.pushState({}, '', newUrl);
+                    //location.reload();
+
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+                        },
+                        type:"GET",
+                        url: newUrl,
+                        success: function (response) {
+                            $('.productContent').html(response.data);
+                            $('.paginateButtons').html(response.paginate);
+                        }
+                    });
+                }
+
+
+                $(document).on('change', '#orderList', function (e) {
+
+                    var order = $(this).val();
+
+                    if (order != '') {
+                        orderBy = order.split('-');
+
+                        url.searchParams.set("order", orderBy[0])
+                        url.searchParams.set("sort", orderBy[1])
+                    }else {
+                        url.searchParams.delete('order');
+                        url.searchParams.delete('sort');
+                    }
+
+                    filter();
+                });
+
             </script>
 @endsection

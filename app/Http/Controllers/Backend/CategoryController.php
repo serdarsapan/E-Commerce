@@ -3,21 +3,20 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SliderRequest;
-use App\Models\Slider;
+use App\Http\Requests\CategoryRequest;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use ImageResize;
 
-class SliderController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $sliders = Slider::get();
-        return view ('backend.pages.slider.index', compact('sliders'));
+        $categories = Category::with('subCategory:id,parent,name')->get();
+        return view ('backend.pages.category.index', compact('categories'));
     }
 
     /**
@@ -25,26 +24,27 @@ class SliderController extends Controller
      */
     public function create()
     {
-        return view('backend.pages.slider.edit');
+        $categories = Category::where('parent',null)->get();
+        return view('backend.pages.category.edit', compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SliderRequest $request)
+    public function store(CategoryRequest $request)
     {
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $fileName = '-'.Str::slug($request->name);
-            $upFile = 'img/slider/';
+            $upFile = 'img/category/';
             $imageUrl = imgUpload($image,$fileName,$upFile);
         }
 
-        Slider::create([
+        Category::create([
             'image'=>$imageUrl,
             'name'=>$request->name,
             'content'=>$request->content,
-            'link'=>$request->link,
+            'parent'=>$request->parent,
             'status'=>$request->status,
         ]);
         return back()->withSuccess('Created Successfully!');
@@ -63,8 +63,8 @@ class SliderController extends Controller
      */
     public function edit(string $id)
     {
-        $slider = Slider::where('id', $id)->first();
-        return view('backend.pages.slider.edit', compact('slider'));
+        $category = Category::where('id', $id)->first();
+        return view('backend.pages.category.edit', compact('category'));
     }
 
     /**
@@ -72,20 +72,20 @@ class SliderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $slider = Slider::where('id',$id)->firstOrFail();
+        $category = Category::where('id',$id)->firstOrFail();
 
         if ($request->hasFile('image')) {
-            fileDel($slider->image);
+            fileDel($category->image);
             $image = $request->file('image');
             $fileName = '-'.Str::slug($request->name);
-            $upFile = 'img/slider/';
+            $upFile = 'img/category/';
             $imageUrl = imgUpload($image,$fileName,$upFile);
         }
 
-        Slider::where('id',$id)->update([
+        Category::where('id',$id)->update([
             'name'=>$request->name,
             'content'=>$request->content,
-            'link'=>$request->link,
+            'parent'=>$request->parent,
             'status'=>$request->status,
             'image'=>$imageUrl ?? null,
         ]);
@@ -97,10 +97,10 @@ class SliderController extends Controller
      */
     public function destroy(Request $request)
     {
-        $slider = Slider::where('id',$request->id)->firstOrFail();
+        $category = Category::where('id',$request->id)->firstOrFail();
 
-        fileDel($slider->image);
-        $slider->delete();
+        fileDel($category->image);
+        $category->delete();
         return response(['error'=>false,'message'=>'Deleted Successfully!']);
     }
 
@@ -109,7 +109,7 @@ class SliderController extends Controller
         $update = $request->statu;
         $updateCheck = $update == "false" ? '0' : '1';
 
-        Slider::where('id',$request->id)->update(['status'=> $updateCheck]);
+        Category::where('id',$request->id)->update(['status'=> $updateCheck]);
         return response(['error'=>false,'status'=>$update]);
     }
 }

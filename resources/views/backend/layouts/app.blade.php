@@ -5,6 +5,9 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Shoppers Admin Panel</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{asset('backFiles')}}/vendors/feather/feather.css">
@@ -318,6 +321,8 @@
 </div>
 <!-- container-scroller -->
 
+<!-- jQuery -->
+<script src="{{asset('backFiles')}}/js/jquery-3.7.1.min.js"></script>
 <!-- plugins:js -->
 <script src="{{asset('backFiles')}}/vendors/js/vendor.bundle.base.js"></script>
 <!-- endinject -->

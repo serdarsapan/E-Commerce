@@ -13,10 +13,10 @@ class PageController extends Controller
     public function products(Request $request,$slug=null)
     {
         $item = request()->segment(1) ?? null;
-        $size = $request->size ?? null;
-        $color = $request->color ?? null;
-        $startPrice = $request->start_price ?? null;
-        $endPrice = $request->end_price ?? null;
+        $sizes = !empty($request->size) ? explode(',',$request->size) : null;
+        $colors = !empty($request->color) ? explode(',',$request->color) : null;
+        $startPrice = $request->min ?? null;
+        $endPrice = $request->max ?? null;
         $order = $request->order ?? 'id';
         $sort = $request->sort ?? 'desc';
 
@@ -28,12 +28,13 @@ class PageController extends Controller
 
         $products = Products::query()
             ->where('status','1')
-            ->when($size, function($query,$size) {
-                return $query->where('size',$size);
+            ->when($sizes, function($query,$sizes) {
+                return $query->whereIn('size',$sizes);
             })
-            ->when($color, function($query,$color) {
-                return $query->where('color',$color);
-            })->when($categoryId, function ($query, $categoryId) {
+            ->when($colors, function($query,$colors) {
+                return $query->whereIn('color',$colors);
+            })
+            ->when($categoryId, function ($query, $categoryId) {
                 return $query->where('category_id', $categoryId);
             })
             ->when($startPrice && $endPrice, function ($query) use ($startPrice,$endPrice) {
@@ -48,15 +49,18 @@ class PageController extends Controller
             ->orderBy($order, $sort)
             ->paginate(21);
 
-
-            $minPrice = $products->min('price');
-            $maxPrice = $products->max('price');
+            if($request->ajax()) {
+                $view = view('frontend.ajax.productList', compact('products'))->render();
+                return response(['data'=>$view, 'paginate'=>(string) $products->withQueryString()->links('pagination::bootstrap-4')]);
+            }
 
             $sizeLists = Products::where('status','1')->groupBy('size')->pluck('size')->toArray();
 
             $colors = Products::where('status','1')->groupBy('color')->pluck('color')->toArray();
 
-    return view('frontend.pages.products', compact('products','minPrice','maxPrice','sizeLists','colors'));
+            $maxPrice = Products::max('price');
+
+    return view('frontend.pages.products', compact('products','maxPrice','endPrice','sizeLists','colors'));
     }
 
     public function proDetail($slug)

@@ -4,10 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class
-
-
-ContentFormRequest extends FormRequest
+class CategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,9 +23,8 @@ ContentFormRequest extends FormRequest
     {
         return [
             'name'=>'required|min:3|max:50',
-            'email'=>'required|email',
-            'subject'=>'required|max:25',
-            'message'=>'required|min:5|max:500'
+            'content'=>'required|max:255',
+            'link'=>'required|max:25',
         ];
     }
 }

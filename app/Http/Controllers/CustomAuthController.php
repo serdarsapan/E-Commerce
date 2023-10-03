@@ -23,7 +23,7 @@ class CustomAuthController extends Controller
      */
     public function login()
     {
-        return view('');
+        return view('backend.layouts.app');
     }
 
     public function logouts()

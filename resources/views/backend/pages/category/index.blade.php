@@ -4,9 +4,9 @@
         <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Basic Table</h4>
+                    <h4 class="card-title">Category</h4>
                     <p class="card-description">
-                        <a href="{{ route('dashboard.slider.create') }}" class="btn btn-github">Add Table</a>
+                        <a href="{{ route('dashboard.category.create') }}" class="btn btn-github">Add Table</a>
                     </p>
 
                     @if(session()->get('success'))
@@ -19,31 +19,31 @@
                             <tr>
                                 <th>Image</th>
                                 <th>Title</th>
-                                <th>Catchword</th>
-                                <th>Link</th>
+                                <th>Content</th>
+                                <th>Type</th>
                                 <th>Status</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @if(!empty($sliders) && $sliders->count() > 0)
-                                @foreach($sliders as $slider)
-                                    <tr class="item" itemid="{{$slider->id}}">
-                                        <td><img src="{{ $slider->image }}" alt="image"></td>
-                                        <td>{{ $slider->name }}</td>
-                                        <td>{{ $slider->content ?? '' }}</td>
-                                        <td>{{ $slider->link }}</td>
+                            @if(!empty($categories) && $categories->count() > 0)
+                                @foreach($categories as $category)
+                                    <tr class="item" itemid="{{$category->id}}">
+                                        <td><img src="{{ $category->image }}" alt="image"></td>
+                                        <td>{{ $category->name }}</td>
+                                        <td>{{ $category->content ?? '' }}</td>
+                                        <td>{{ $category->name }}</td>
                                         <td>
                                             <div class="checkbox">
                                                 <label>
-                                            <input type="checkbox" class="case" data-on="In Progress" data-off="Pending" data-onstyle="success" data-offstyle="danger" {{ $slider->status == '1' ? 'checked' : '' }} data-toggle="toggle">
+                                            <input type="checkbox" class="case" data-on="In Progress" data-off="Pending" data-onstyle="success" data-offstyle="danger" {{ $category->status == '1' ? 'checked' : '' }} data-toggle="toggle">
                                                 </label>
                                             </div>
                                         </td>
-                                        <td><a href="{{ route('dashboard.slider.edit', $slider->id) }}" class="btn btn-primary">Edit</a></td>
+                                        <td><a href="{{ route('dashboard.category.edit', $category->id) }}" class="btn btn-primary">Edit</a></td>
                                         <td>
-{{--                                            <form action="{{ route('dashboard.slider.destroy', $slider->id) }}" method="POST">--}}
+{{--                                            <form action="{{ route('dashboard.category.destroy', $category->id) }}" method="POST">--}}
 {{--                                                @csrf--}}
 {{--                                                @method('DELETE')--}}
 {{--                                                <button type="submit" class="btn btn-danger">Delete</button>--}}
@@ -76,7 +76,7 @@
                     'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
                 },
                 type:"POST",
-                url:"{{ route('dashboard.slider.status') }}",
+                url:"{{ route('dashboard.category.status') }}",
                 data:{
                     id:id,
                     statu:statu
@@ -105,7 +105,7 @@
                             'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
                         },
                         type:"DELETE",
-                        url:"{{ route('dashboard.slider.destroy') }}",
+                        url:"{{ route('dashboard.category.destroy') }}",
                         data:{
                             id:id
                         },
