@@ -81,6 +81,7 @@
                             <a href="{{route('products')}}" class="btn btn-outline-primary btn-sm btn-block">Continue Shopping</a>
                         </div>
                     </div>
+                    <form action="" method="POST">
                     <div class="row">
                         <div class="col-md-12">
                             <label class="text-black h4" for="coupon">Coupon</label>
@@ -93,6 +94,7 @@
                             <button class="btn btn-primary btn-sm">Apply Coupon</button>
                         </div>
                     </div>
+                    </form>
                 </div>
                 <div class="col-md-6 pl-5">
                     <div class="row justify-content-end">

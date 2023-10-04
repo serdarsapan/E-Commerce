@@ -11,6 +11,7 @@ class SiteSetting extends Model
 
     protected $fillable = [
       'name',
-      'data'
+      'data',
+        'type'
     ];
 }
