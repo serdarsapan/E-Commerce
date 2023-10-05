@@ -17,6 +17,9 @@
                             @if(session()->get('success'))
                                 <div class="alert alert-success">{{ session()->get('success') }}</div>
                             @endif
+                                @if(session()->get('error'))
+                                    <div class="alert alert-danger">{{ session()->get('error') }}</div>
+                                @endif
                         </div>
                     </div>
             <div class="row mb-5">
@@ -81,14 +84,15 @@
                             <a href="{{route('products')}}" class="btn btn-outline-primary btn-sm btn-block">Continue Shopping</a>
                         </div>
                     </div>
-                    <form action="" method="POST">
+                    <form action="{{ route('coupon.check') }}" method="POST">
+                        @csrf
                     <div class="row">
                         <div class="col-md-12">
                             <label class="text-black h4" for="coupon">Coupon</label>
                             <p>Enter your coupon code if you have one.</p>
                         </div>
                         <div class="col-md-8 mb-3 mb-md-0">
-                            <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
+                            <input type="text" class="form-control py-3" id="coupon" name="coupon_name" value="{{ $coupon->name ?? '' }}" placeholder="Coupon Code">
                         </div>
                         <div class="col-md-4">
                             <button class="btn btn-primary btn-sm">Apply Coupon</button>
@@ -109,7 +113,7 @@
                                     <span class="text-black">Total</span>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <strong class="text-black">{{ $totalPrice }}</strong>
+                                    <strong class="text-black">{{ $newTotalPrice }}</strong>
                                 </div>
                             </div>
 

@@ -46,9 +46,8 @@ Route::group(['middleware'=>'site.setting'], function (){
     Route::get('/thankYou', [PageController::class, 'thankYou'])->name('thankYou');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
-
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-
+    Route::post('/cart/coupon', [CartController::class, 'coupon'])->name('coupon.check');
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
     Auth::routes();
