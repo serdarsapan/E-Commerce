@@ -38,7 +38,7 @@
                             <tbody>
                         @if($cartItem)
                             @foreach($cartItem as $key => $cart)
-                                <tr>
+                                <tr class="orderItem" data-id="{{$key}}">
                                     <td class="product-thumbnail">
                                         <img src="{{ asset($cart['thumbnail']) }}" alt="Image" class="img-fluid">
                                     </td>
@@ -49,16 +49,16 @@
                                     <td>
                                         <div class="input-group mb-3" style="max-width: 120px;">
                                             <div class="input-group-prepend">
-                                                <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+                                                <button class="btn btn-outline-primary js-btn-minus minusBtn" type="button">&minus;</button>
                                             </div>
-                                            <input type="text" class="form-control text-center" value="{{ $cart['qty'] }}" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                                            <input type="text" class="form-control text-center qtyItem" value="{{ $cart['qty'] }}" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
                                             <div class="input-group-append">
-                                                <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+                                                <button class="btn btn-outline-primary js-btn-plus plusBtn" type="button">&plus;</button>
                                             </div>
                                         </div>
 
                                     </td>
-                                    <td>${{ $cart['price'] * $cart['qty'] }}</td>
+                                    <td class="itemTotal">${{ $cart['price'] * $cart['qty'] }}</td>
                                     <td>
                                         <form action="{{ route('cart.remove') }}" method="POST">
                                             @csrf
@@ -119,7 +119,7 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <button class="btn btn-primary btn-lg py-3 btn-block" onclick="window.location='{{ route('checkout') }}'">Proceed To Checkout</button>
+                                    <button class="btn btn-primary btn-lg py-3 btn-block paymentButton" onclick="window.location='{{ route('checkout') }}'">Proceed To Checkout</button>
                                 </div>
                             </div>
                         </div>
@@ -128,4 +128,53 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('custom_js')
+    <script>
+        $(document).on('click','.paymentButton', function(e){
+
+        });
+
+        function cartUpdate(product_id,qty,itemEvent) {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type:"POST",
+                url:"{{route('cart.newQty')}}",
+                data:{
+                    product_id:product_id,
+                    qty:qty,
+                    itemEvent:itemEvent
+                },
+                success: function (response) {
+
+                    $('.selected').find('.itemTotal').text(response.itemTotal + ' $' +
+                        '' +
+                        '');
+                    if (qty == 0) {
+                        $('.selected').remove();
+                    }
+                    console.log(response);
+                }
+            });
+        }
+
+        $(document).on('click','.minusBtn', function(e){
+            $('.orderItem').removeClass('selected');
+            $(this).closest('.orderItem').addClass('selected');
+            var product_id = $('.selected').closest('.orderItem').attr('data-id');
+            var qty = $('.selected').closest('.orderItem').find('.qtyItem').val();
+            cartUpdate(product_id,qty,'Minus');
+        });
+
+        $(document).on('click','.plusBtn', function(e){
+            $('.orderItem').removeClass('selected');
+            $(this).closest('.orderItem').addClass('selected');
+            var product_id = $('.selected').closest('.orderItem').attr('data-id');
+            var qty = $('.selected').closest('.orderItem').find('.qtyItem').val();
+            cartUpdate(product_id,qty,'Plus');
+        });
+    </script>
 @endsection

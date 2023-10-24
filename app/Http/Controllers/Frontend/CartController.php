@@ -58,6 +58,40 @@ class CartController extends Controller
         }
         session(['cart'=>$cartItem]);
 
+        if ($request->ajax()) {
+            return response()->json('Cart Updated');
+        }
+
+        return back()->withSuccess('Product Successfully Added');
+    }
+
+    public function newQty(Request $request)
+    {
+        $productId = $request->product_id;
+        $qty = $request->qty ?? 1;
+        $size = $request->size;
+        $itemTotal = 0;
+
+        $product = Products::find($productId);
+
+        if (empty($product)) {
+            return response()->json('Product Cannot Found!');
+        }
+        $cartItem = session('cart',[]);
+
+        if (array_key_exists($productId,$cartItem)){
+            $cartItem[$productId]['qty'] += $qty;
+            if ($qty == 0 || $qty < 0){
+                unset($cartItem[$productId]);
+            }
+            $itemTotal = $product->price * $qty;
+        }
+        session(['cart'=>$cartItem]);
+
+        if ($request->ajax()) {
+            return response()->json(['itemTotal'=>$itemTotal,'message'=>'Cart Updated']);
+        }
+
         return back()->withSuccess('Product Successfully Added');
     }
 

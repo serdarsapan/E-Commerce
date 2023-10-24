@@ -21,7 +21,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <img src="{{ $product->thumbnail }}" alt="Image" class="img-fluid">
+                    <img src="{{ $product->image }}" alt="Image" class="img-fluid">
                 </div>
                 <div class="col-md-6">
                     <h2 class="text-black">{{ $product->name }}</h2>

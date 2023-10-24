@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContactController;
+use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\SliderController;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,10 @@ Route::group(['middleware'=>['panel.setting','auth'], 'as'=>'dashboard.'], funct
     Route::resource('/category', CategoryController::class)->except('destroy');
     Route::delete('/category/destroy', [CategoryController::class, 'destroy'])->name('category.destroy');
     Route::post('/category-case/update', [CategoryController::class, 'status'])->name('category.status');
+
+    Route::resource('/product', ProductController::class)->except('destroy');
+    Route::delete('/product/destroy', [ProductController::class, 'destroy'])->name('product.destroy');
+    Route::post('/product-case/update', [ProductController::class, 'status'])->name('product.status');
 
     Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
     Route::get('/contact/{id}/edit', [ContactController::class, 'edit'])->name('contact.edit');

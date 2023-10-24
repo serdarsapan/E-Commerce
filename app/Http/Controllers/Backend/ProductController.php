@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SliderRequest;
-use App\Models\Slider;
+use App\Http\Requests\ProductRequest;
+use App\Models\Category;
+use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use ImageResize;
 
-class SliderController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $sliders = Slider::get();
-        return view ('backend.pages.slider.index', compact('sliders'));
+        $products = Products::orderBy('id','desc')->get();
+        return view ('backend.pages.product.index', compact('products'));
     }
 
     /**
@@ -25,26 +25,32 @@ class SliderController extends Controller
      */
     public function create()
     {
-        return view('backend.pages.slider.edit');
+        $products = Products::get()->first();
+        return view('backend.pages.product.edit', compact('products'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SliderRequest $request)
+    public function store(ProductRequest $request)
     {
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $fileName = '-'.Str::slug($request->name);
-            $upFile = 'img/slider/';
+            $fileName = Str::slug($request->name);
+            $upFile = 'img/products/';
             $imageUrl = imgUpload($image,$fileName,$upFile);
         }
 
-        Slider::create([
-            'image'=>$imageUrl,
+        Products::create([
             'name'=>$request->name,
+            'category_id'=>$request->category_id,
             'content'=>$request->content,
-            'link'=>$request->link,
+            'short_text'=>$request->short_text,
+            'price'=>$request->price,
+            'size'=>$request->size,
+            'color'=>$request->color,
+            'qty'=>$request->qty,
+            'image'=>$imageUrl ?? $request->image,
             'status'=>$request->status,
         ]);
         return back()->withSuccess('Created Successfully!');
@@ -63,8 +69,10 @@ class SliderController extends Controller
      */
     public function edit(string $id)
     {
-        $slider = Slider::where('id', $id)->first();
-        return view('backend.pages.slider.edit', compact('slider'));
+        $product = Products::where('id', $id)->first();
+
+        $categories = Category::get();
+        return view('backend.pages.product.edit', compact('product','categories'));
     }
 
     /**
@@ -72,22 +80,27 @@ class SliderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $slider = Slider::where('id',$id)->firstOrFail();
+        $product = Products::where('id',$id)->firstOrFail();
 
         if ($request->hasFile('image')) {
-            fileDel($slider->image);
+            fileDel($product->image);
             $image = $request->file('image');
-            $fileName = '-'.Str::slug($request->name);
-            $upFile = 'img/slider/';
+            $fileName = Str::slug($request->name);
+            $upFile = 'img/products/';
             $imageUrl = imgUpload($image,$fileName,$upFile);
         }
 
-        Slider::where('id',$id)->update([
+        Products::where('id',$id)->update([
+            'image'=>$imageUrl ?? $product->image,
             'name'=>$request->name,
             'content'=>$request->content,
-            'link'=>$request->link,
+            'category_id'=>$request->category_id,
+            'short_text'=>$request->short_text,
+            'price'=>$request->price,
+            'size'=>$request->size,
+            'color'=>$request->color,
+            'qty'=>$request->qty,
             'status'=>$request->status,
-            'image'=>$imageUrl ?? $slider->image,
         ]);
         return back()->withSuccess('Updated Successfully!');
     }
@@ -97,10 +110,10 @@ class SliderController extends Controller
      */
     public function destroy(Request $request)
     {
-        $slider = Slider::where('id',$request->id)->firstOrFail();
+        $product = Products::where('id',$request->id)->firstOrFail();
 
-        fileDel($slider->image);
-        $slider->delete();
+        fileDel($product->image);
+        $product->delete();
         return response(['error'=>false,'message'=>'Deleted Successfully!']);
     }
 
@@ -109,7 +122,7 @@ class SliderController extends Controller
         $update = $request->statu;
         $updateCheck = $update == "false" ? '0' : '1';
 
-        Slider::where('id',$request->id)->update(['status'=> $updateCheck]);
+        Products::where('id',$request->id)->update(['status'=> $updateCheck]);
         return response(['error'=>false,'status'=>$update]);
     }
 }

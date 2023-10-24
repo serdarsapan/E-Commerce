@@ -19,6 +19,7 @@
 
     <link rel="stylesheet" href="../frontFiles/css/style.css">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
 

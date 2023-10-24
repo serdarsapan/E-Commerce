@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
+use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -35,7 +36,7 @@ class CategoryController extends Controller
     {
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $fileName = '-'.Str::slug($request->name);
+            $fileName = Str::slug($request->name);
             $upFile = 'img/category/';
             $imageUrl = imgUpload($image,$fileName,$upFile);
         }
@@ -87,7 +88,7 @@ class CategoryController extends Controller
             'content'=>$request->content,
             'parent'=>$request->parent,
             'status'=>$request->status,
-            'image'=>$imageUrl ?? null,
+            'image'=>$imageUrl ?? $category->image,
         ]);
         return back()->withSuccess('Updated Successfully!');
     }

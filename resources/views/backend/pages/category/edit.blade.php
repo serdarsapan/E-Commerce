@@ -56,10 +56,10 @@
                             <label for="catchword">Content</label>
                             <textarea class="form-control" name="content" id="content" cols="30" rows="1" placeholder="Content">{!! $category->content ?? '' !!}</textarea>
                         </div>
-{{--                        <div class="form-group">--}}
-{{--                            <label for="link">Link</label>--}}
-{{--                            <input type="text" class="form-control" id="link" name="link" value="{{ $category->link ?? '' }}" placeholder="Link">--}}
-{{--                        </div>--}}
+                        <div class="form-group">
+                            <label for="link">Link</label>
+                            <input type="text" class="form-control" id="link" name="link" value="{{ $category->link ?? '' }}" placeholder="Link">
+                        </div>
                         <div class="form-group">
                             <label for="name">Type</label>
                             <select name="parent" id="" class="form-control">
