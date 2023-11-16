@@ -31,6 +31,7 @@
                     <form action="{{ route('cart.add') }}" method="POST">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <input type="hidden" name="size" value="{{ $product->size }}">
                     <div class="mb-1 d-flex">
 
 
@@ -73,6 +74,30 @@
                     <h2>Featured Products</h2>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="nonloop-block-3 owl-carousel">
+                        @if(!empty($lastProducts) && $lastProducts->count() > 0)
+                            @foreach($lastProducts as $item)
+                                <div class="item">
+                                    <div class="block-4 text-center">
+                                        <figure class="block-4-image">
+                                            <img src="{{ asset($item->image) }}" alt="Image placeholder" class="img-fluid">
+                                        </figure>
+                                        <div class="block-4-text p-4">
+                                            <h3><a href="{{ route('proDetail', $item->slug) }}">{{ $item->name }}</a></h3>
+                                            <p class="mb-0">{{ $item->category_name }}</p>
+                                            <p class="text-primary font-weight-bold">${{ $item->price }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="nonloop-block-3 owl-carousel">

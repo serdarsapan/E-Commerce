@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\InvoiceRequest;
 use App\Models\Coupon;
+use App\Models\Invoice;
+use App\Models\Order;
 use App\Models\Products;
 use Illuminate\Http\Request;
 
@@ -19,6 +22,31 @@ class CartController extends Controller
             $totalPrice += $cart['price'] * $cart['qty'];
         }
 
+        if (session()->get('coupon_code') && $totalPrice != 0) {
+            $coupon = Coupon::where('name',session()->get('coupon_code'))->where('status','1')->first();
+            $couponPrice = $coupon->price ?? 0;
+            $couponCode = $coupon->name ?? '';
+
+            $newTotalPrice = $totalPrice - $couponPrice;
+        }else {
+            $newTotalPrice = $totalPrice;
+        }
+
+        session()->put('total_price',$newTotalPrice);
+        return view('frontend.pages.cart', compact('cartItem','newTotalPrice'));
+    }
+
+    public function checkout()
+    {
+        $cartItem = session('cart',[]);
+        $totalPrice = 0;
+        $couponPrice = 0;
+
+        foreach ($cartItem as $cart)
+        {
+            $totalPrice += $cart['price'] * $cart['qty'];
+        }
+
         if (session()->get('coupon_code')) {
             $coupon = Coupon::where('name',session()->get('coupon_code'))->where('status','1')->first();
             $couponPrice = $coupon->price ?? 0;
@@ -26,11 +54,11 @@ class CartController extends Controller
 
             $newTotalPrice = $totalPrice - $couponPrice;
         }else {
-            $newTotalPrice = 0;
+            $newTotalPrice = $totalPrice;
         }
 
         session()->put('total_price',$newTotalPrice);
-        return view('frontend.pages.cart', compact('cartItem','newTotalPrice'));
+        return view('frontend.pages.checkout', compact('cartItem','newTotalPrice','couponPrice'));
     }
     public function add(Request $request)
     {
@@ -69,7 +97,6 @@ class CartController extends Controller
     {
         $productId = $request->product_id;
         $qty = $request->qty ?? 1;
-        $size = $request->size;
         $itemTotal = 0;
 
         $product = Products::find($productId);
@@ -132,5 +159,69 @@ class CartController extends Controller
         session()->put('coupon_code',$couponCode);
 
         return back()->withSuccess('Coupon Applied!');
+    }
+
+    function generateCode() {
+        $orderNo = generateOTP(11);
+        if ($this->barcodeKodExists($orderNo)) {
+            return $this->generateCode();
+        }
+        return $orderNo;
+    }
+
+
+    function barcodeKodExists($orderNo) {
+        return Invoice::where('order_no',$orderNo)->exists();
+    }
+
+    public function cartSave(Request $request)
+    {
+        $request->validate([
+            'country' => 'required',
+            'name' => 'required|string|max:50',
+            'company_name' => 'nullable|string|max:100',
+            'address' => 'required|string|max:255',
+            'zip_code' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'note' => 'nullable|string',
+            ],
+            [
+                'country.required' => 'The country field is required.',
+                'name.required' => 'The name field is required.',
+                'company_name.max' => 'The company name may not be greater than :100.',
+                'address.required' => 'The address field is required.',
+                'zip_code.required' => 'The zip code field is required.',
+                'email.required' => 'The email field is required.',
+                'email.email' => 'Please enter a valid email address.',
+                'phone.required' => 'The phone field is required.',]);
+
+        $invoice = Invoice::create([
+            "user_id"=>auth()->user()->id ?? null,
+            "order_no"=> $this->generateCode(),
+            "country"=>$request->country,
+            "name"=>$request->name,
+            "company_name"=>$request->company_name ?? null,
+            "address"=>$request->address ?? null,
+            "city"=>$request->city ?? null,
+            "phone"=>$request->phone ?? null,
+            "zip_code"=>$request->zip_code ?? null,
+            "email"=>$request->email ?? null,
+            "note"=>$request->note ?? null,
+        ]);
+
+        $cart = session()->get('cart') ?? [];
+        foreach ( $cart as $key => $item ) {
+            Order::create([
+                'order_no'=> $invoice->order_no,
+                'product_id'=>$key,
+                'name'=>$item['name'],
+                'price'=>$item['price'],
+                'qty'=>$item['qty'],
+            ]);
+        }
+
+        session()->forget('cart');
+        return redirect()->route('thankYou');
     }
 }

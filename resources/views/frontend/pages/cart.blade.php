@@ -113,13 +113,13 @@
                                     <span class="text-black">Total</span>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <strong class="text-black">{{ $newTotalPrice }}</strong>
+                                    <strong class="text-black">${{ $newTotalPrice }}</strong>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <button class="btn btn-primary btn-lg py-3 btn-block paymentButton" onclick="window.location='{{ route('checkout') }}'">Proceed To Checkout</button>
+                                    <button class="btn btn-primary btn-lg py-3 btn-block paymentButton">Proceed To Checkout</button>
                                 </div>
                             </div>
                         </div>
@@ -133,10 +133,17 @@
 @section('custom_js')
     <script>
         $(document).on('click','.paymentButton', function(e){
+            var url = "{{ route('cart.checkout') }}";
+
+            @if(!empty(session()->get('cart')))
+                window.location.href = url;
+            @endif
 
         });
 
-        function cartUpdate(product_id,qty,itemEvent) {
+        function cartUpdate() {
+            var product_id = $('.selected').closest('.orderItem').attr('data-id');
+            var qty = $('.selected').closest('.orderItem').find('.qtyItem').val();
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -146,17 +153,13 @@
                 data:{
                     product_id:product_id,
                     qty:qty,
-                    itemEvent:itemEvent
                 },
                 success: function (response) {
 
-                    $('.selected').find('.itemTotal').text(response.itemTotal + ' $' +
-                        '' +
-                        '');
+                    $('.selected').find('.itemTotal').text('$' + response.itemTotal + '' + '');
                     if (qty == 0) {
                         $('.selected').remove();
                     }
-                    console.log(response);
                 }
             });
         }
@@ -164,17 +167,13 @@
         $(document).on('click','.minusBtn', function(e){
             $('.orderItem').removeClass('selected');
             $(this).closest('.orderItem').addClass('selected');
-            var product_id = $('.selected').closest('.orderItem').attr('data-id');
-            var qty = $('.selected').closest('.orderItem').find('.qtyItem').val();
-            cartUpdate(product_id,qty,'Minus');
+            cartUpdate();
         });
 
         $(document).on('click','.plusBtn', function(e){
             $('.orderItem').removeClass('selected');
             $(this).closest('.orderItem').addClass('selected');
-            var product_id = $('.selected').closest('.orderItem').attr('data-id');
-            var qty = $('.selected').closest('.orderItem').find('.qtyItem').val();
-            cartUpdate(product_id,qty,'Plus');
+            cartUpdate();
         });
     </script>
 @endsection

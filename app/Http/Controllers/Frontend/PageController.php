@@ -67,8 +67,12 @@ class PageController extends Controller
     {
     $product = Products::where('slug', $slug)->where('status','1')->firstOrFail();
     $featureProducts = $this->featureProducts($product,5);
-
-    return view('frontend.pages.proDetail', compact('product','featureProducts'));
+        $lastProducts = Products::where('status','1')
+            ->select(['id','name','slug','size','color','price','category_id','category_name','image'])
+            ->orderBy('id','desc')
+            ->limit(10)
+            ->get();
+    return view('frontend.pages.proDetail', compact('product','featureProducts','lastProducts'));
     }
     public function featureProducts($product,$limit)
     {
@@ -88,11 +92,6 @@ class PageController extends Controller
     public function contact()
     {
         return view('frontend.pages.contact');
-    }
-
-    public function checkout()
-    {
-        return view('frontend.pages.checkout');
     }
     public function thankYou()
     {

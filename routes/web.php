@@ -41,7 +41,7 @@ Route::group(['middleware'=>'site.setting'], function (){
 
     Route::post('contact', [AjaxController::class, 'contactSave'])->name('contactSave');
 
-    Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
+    Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
     Route::get('/thankYou', [PageController::class, 'thankYou'])->name('thankYou');
 
@@ -50,6 +50,7 @@ Route::group(['middleware'=>'site.setting'], function (){
     Route::post('/cart/coupon', [CartController::class, 'coupon'])->name('coupon.check');
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/newQty', [CartController::class, 'newQty'])->name('cart.newQty');
+    Route::post('/cart/save', [CartController::class, 'cartSave'])->name('cart.cartSave');
 
     Auth::routes();
     Route::get('/login',[CustomAuthController::class, 'login'])->name('login');

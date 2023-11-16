@@ -25,8 +25,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $products = Products::get()->first();
-        return view('backend.pages.product.edit', compact('products'));
+        return view('backend.pages.product.edit');
     }
 
     /**
