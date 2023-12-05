@@ -10,9 +10,13 @@
                     <p class="mb-0">{{ $product->short_text }}</p>
                     <p class="text-primary font-weight-bold">${{ $product->price }}</p>
 
-                    <form action="{{ route('cart.add') }}" method="POST">
+                    @php
+                    $encrypt = encrypt($product->id);
+                    @endphp
+
+                    <form id="addForm" method="POST">
                         @csrf
-                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <input type="hidden" name="product_id" value="{{ $encrypt }}">
                         <input type="hidden" name="size" value="{{ $product->size }}">
                         <button type="submit" class="buy-now btn btn-sm btn-primary">Add To Cart</button>
                     </form>

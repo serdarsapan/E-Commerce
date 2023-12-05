@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../frontFiles/css/jquery-ui.css">
     <link rel="stylesheet" href="../frontFiles/css/owl.carousel.min.css">
     <link rel="stylesheet" href="../frontFiles/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
 
     <link rel="stylesheet" href="../frontFiles/css/aos.css">
@@ -155,6 +156,7 @@
 <script src="../frontFiles/js/owl.carousel.min.js"></script>
 <script src="../frontFiles/js/jquery.magnific-popup.min.js"></script>
 <script src="../frontFiles/js/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 @yield('custom_js')
 <script src="../frontFiles/js/main.js"></script>
 

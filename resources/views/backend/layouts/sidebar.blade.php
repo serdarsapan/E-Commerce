@@ -56,6 +56,12 @@
                 </ul>
             </div>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('dashboard.order.index') }}">
+                <i class="icon-layout menu-icon"></i>
+                <span class="menu-title">Order</span>
+            </a>
+        </li>
     </ul>
 </nav>
 

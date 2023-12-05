@@ -19,5 +19,14 @@ class Invoice extends Model
         'country',
         'zip_code',
         'note',
+        'status',
     ];
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'order_no','order_no');
+    }
+    public function order() {
+        return $this->belongsTo(Order::class);
+    }
 }

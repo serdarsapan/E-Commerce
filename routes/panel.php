@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContactController;
+use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\SliderController;
@@ -53,4 +54,8 @@ Route::group(['middleware'=>['panel.setting','auth'], 'as'=>'dashboard.'], funct
     Route::get('/setting/{id}/edit', [SettingController::class, 'edit'])->name('setting.edit');
     Route::put('/setting/{id}/update', [SettingController::class, 'update'])->name('setting.update');
     Route::delete('/setting/destroy', [SettingController::class, 'destroy'])->name('setting.destroy');
+
+    Route::resource('/order', OrderController::class)->except('destroy');
+    Route::delete('/order/destroy', [OrderController::class, 'destroy'])->name('order.destroy');
+    Route::post('/order-case/update', [OrderController::class, 'status'])->name('order.status');
 });

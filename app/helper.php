@@ -54,3 +54,16 @@ if (!function_exists('strLimit')) {
         return Str::limit($text, $limit, $end);
     }
 }
+
+if (!function_exists('encrypt')) {
+    function encrypt($string) {
+        return encrypt($string);
+    }
+}
+
+if (!function_exists('decrypt')) {
+    function decrypt($string) {
+        return decrypt($string);
+    }
+}
+

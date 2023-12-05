@@ -60,9 +60,13 @@
                                     </td>
                                     <td class="itemTotal">${{ $cart['price'] * $cart['qty'] }}</td>
                                     <td>
-                                        <form action="{{ route('cart.remove') }}" method="POST">
+
+                                        @php
+                                            $encrypt = encrypt($key);
+                                        @endphp
+                                        <form class="delForm" method="POST">
                                             @csrf
-                                            <input type="text" hidden name="product_id" value="{{ $key }}">
+                                            <input type="text" hidden name="product_id" value="{{ $encrypt }}">
                                             <button type="submit" class="btn btn-primary btn-sm">Remove</button>
                                         </form>
                                     </td>
@@ -174,6 +178,25 @@
             $('.orderItem').removeClass('selected');
             $(this).closest('.orderItem').addClass('selected');
             cartUpdate();
+        });
+
+        $(document).on('click', '.delForm', function (e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+            var item = $(this);
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type:"POST",
+                url:"{{route('cart.remove')}}",
+                data:formData,
+                success: function (response) {
+                    toastr.success(response.message);
+                    $('.count').text(response.cartCount);
+                    item.closest('.orderItem').remove();
+                }
+            });
         });
     </script>
 @endsection

@@ -16,4 +16,7 @@ class Order extends Model
       'price',
       'qty'
     ];
+    public function invoices() {
+        return $this->hasMany(Invoice::class);
+    }
 }

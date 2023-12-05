@@ -62,7 +62,7 @@ class CartController extends Controller
     }
     public function add(Request $request)
     {
-        $productId = $request->product_id;
+        $productId = decrypt($request->product_id);
         $qty = $request->qty;
         $size = $request->size;
 
@@ -87,7 +87,7 @@ class CartController extends Controller
         session(['cart'=>$cartItem]);
 
         if ($request->ajax()) {
-            return response()->json('Cart Updated');
+            return response()->json(['cartCount'=>count(session()->get('cart')), 'message'=>'Product Successfully Added']);
         }
 
         return back()->withSuccess('Product Successfully Added');
@@ -125,12 +125,16 @@ class CartController extends Controller
     public function remove(Request $request)
     {
         $request->all();
-        $productId = $request->product_id;
+        $productId = decrypt($request->product_id);
         $cartItem = session('cart',[]);
         if (array_key_exists($productId,$cartItem)) {
             unset($cartItem[$productId]);
         }
         session(['cart' => $cartItem]);
+
+        if ($request->ajax()) {
+            return response()->json(['cartCount'=>count(session()->get('cart')), 'message'=>'Removed Successfully!']);
+        }
         return back()->withSuccess('Removed Successfully!');
     }
 
