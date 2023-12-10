@@ -35,7 +35,7 @@ class SliderController extends Controller
     {
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $fileName = '-'.Str::slug($request->name);
+            $fileName = Str::slug($request->name);
             $upFile = 'img/slider/';
             $imageUrl = imgUpload($image,$fileName,$upFile);
         }
@@ -77,7 +77,7 @@ class SliderController extends Controller
         if ($request->hasFile('image')) {
             fileDel($slider->image);
             $image = $request->file('image');
-            $fileName = '-'.Str::slug($request->name);
+            $fileName = Str::slug($request->name);
             $upFile = 'img/slider/';
             $imageUrl = imgUpload($image,$fileName,$upFile);
         }

@@ -26,7 +26,7 @@ if (!function_exists('fileDel')) {
 if (!function_exists('imgUpload')) {
     function imgUpload($image,$name,$path) {
         $extension = $image->getClientOriginalExtension();
-        $fileName = '-'.Str::slug($name);
+        $fileName = Str::slug($name);
 
         if ($extension == 'pdf' || $extension == 'svg' || $extension == 'webp' ) {
 
@@ -64,6 +64,48 @@ if (!function_exists('encrypt')) {
 if (!function_exists('decrypt')) {
     function decrypt($string) {
         return decrypt($string);
+    }
+
+
+    if (!function_exists('metacreate')) {
+        function metacreate($page)
+        {
+            $pageseo = PageSeo::where('page', $page)->with(['images','pages'])->first();
+
+            $metas = [];
+            $title = $pageseo->title;
+            $description = $pageseo->description;
+            $keywords = $pageseo->keywords;
+            $currenturl = special_path(app()->getLocale(), $pageseo->page);
+
+            foreach ($pageseo->pages as $pg) {
+                $seourl =  special_path($pg->lang, $pg->page);
+                if ($pg->lang !== app()->getLocale()) {
+                    $metas[] = $seourl;
+                }else {
+                    $title = $pg->title;
+                    $description = $pg->description;
+                    $keywords = $pg->keywords;
+                    $currenturl = $seourl;
+                }
+            }
+
+            $seoimg = collect($pageseo->images->data ?? '');
+            $bgimg = $seoimg->sortByDesc('glassCase')->first()['image'] ?? '';
+            $enpage = special_path('en', $pageseo->page);
+
+            $seoLists = [
+                'title' => $title,
+                'description' => $description,
+                'keywords' => $keywords,
+                'currenturl' => $currenturl,
+                'metas' => $metas,
+                'bgimg' => $bgimg,
+                'enpage' => $enpage,
+            ];
+
+            return $seoLists;
+        }
     }
 }
 

@@ -32,8 +32,15 @@ class CartController extends Controller
             $newTotalPrice = $totalPrice;
         }
 
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'Cart'
+        ];
+
         session()->put('total_price',$newTotalPrice);
-        return view('frontend.pages.cart', compact('cartItem','newTotalPrice'));
+        return view('frontend.pages.cart', compact('breadcrumb','cartItem','newTotalPrice'));
     }
 
     public function checkout()
@@ -57,8 +64,22 @@ class CartController extends Controller
             $newTotalPrice = $totalPrice;
         }
 
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'Checkout'
+        ];
+
+        if (!empty($cartItem)) {
+            $breadcrumb['pages'][] = [
+                'link'=> route('cart', $cart),
+                'name'=> 'Cart'
+            ];
+        }
+
         session()->put('total_price',$newTotalPrice);
-        return view('frontend.pages.checkout', compact('cartItem','newTotalPrice','couponPrice'));
+        return view('frontend.pages.checkout', compact('breadcrumb','cartItem','newTotalPrice','couponPrice'));
     }
     public function add(Request $request)
     {

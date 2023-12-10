@@ -2,13 +2,7 @@
 @section('content')
     <div class="site-wrap">
 
-        <div class="bg-light py-3">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12 mb-0"><a href="{{ asset('/') }}">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Shop</strong></div>
-                </div>
-            </div>
-        </div>
+        @include('frontend.layouts.breadcrumb');
 
         <div class="site-section">
             <div class="container">
@@ -28,7 +22,7 @@
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
                                             @if($categories->count() > 0)
                                                 @foreach($categories->where('parent', null) as $category)
-                                                    <a class="dropdown-item" href="{{ url('products? category='.$category->slug) }}">{{ $category->name }}</a>
+                                                    <a class="dropdown-item" href="{{ url('products/'.$category->slug) }}">{{ $category->name }}</a>
                                                 @endforeach
                                             @endif
                                         </div>
@@ -69,7 +63,7 @@
                             <ul class="list-unstyled mb-0">
                                 @if($categories->count() > 0)
                                     @foreach($categories->where('parent', null) as $category)
-                                        <li class="mb-1"><a href="{{ url('products? category='.$category->slug) }}" class="d-flex"><span>{{ $category->name }}</span> <span class="text-black ml-auto">({{ $category->items_count }})</span></a></li>
+                                        <li class="mb-1"><a href="{{ url('products/'.$category->slug) }}" class="d-flex"><span>{{ $category->name }}</span> <span class="text-black ml-auto">({{ $category->items_count }})</span></a></li>
                                     @endforeach
 
                                 @endif

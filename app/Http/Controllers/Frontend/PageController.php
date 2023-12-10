@@ -12,13 +12,47 @@ class PageController extends Controller
 {
     public function products(Request $request,$slug=null)
     {
-        $item = request()->segment(1) ?? null;
+
+        $item = request()->segments() ?? null;
         $sizes = !empty($request->size) ? explode(',',$request->size) : null;
         $colors = !empty($request->color) ? explode(',',$request->color) : null;
         $startPrice = $request->min ?? null;
         $endPrice = $request->max ?? null;
         $order = $request->order ?? 'id';
         $sort = $request->sort ?? 'desc';
+
+
+        $mainCategory = null;
+        $subcategory = null;
+        if (!empty($item) && empty($slug)) {
+            $mainCategory = Category::whereIn('slug',$item)->first();
+        }else if (!empty($item) && !empty($slug)){
+            $mainCategory = Category::whereIn('slug',$item)->first();
+            $subcategory = Category::where('slug',$slug)->first();
+        }
+
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'Products'
+        ];
+
+
+        if(!empty($mainCategory) && empty($subcategory)) {
+            $breadcrumb['active'] = $mainCategory->name;
+        }
+
+        if(!empty($subcategory)) {
+            $breadcrumb['pages'][] = [
+                'link'=> route('products', $mainCategory->slug),
+                'name'=> $mainCategory->name
+            ];
+
+            $breadcrumb['active'] = $subcategory->name ?? $mainCategory->name;
+        }
+
+
 
         $categoryId = '';
         $category = $request->get('category');
@@ -60,7 +94,7 @@ class PageController extends Controller
 
             $maxPrice = Products::max('price');
 
-    return view('frontend.pages.products', compact('products','maxPrice','endPrice','sizeLists','colors'));
+    return view('frontend.pages.products', compact('breadcrumb','products','maxPrice','endPrice','sizeLists','colors'));
     }
 
     public function proDetail($slug)
@@ -72,7 +106,15 @@ class PageController extends Controller
             ->orderBy('id','desc')
             ->limit(10)
             ->get();
-    return view('frontend.pages.proDetail', compact('product','featureProducts','lastProducts'));
+
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'Product Detail'
+        ];
+
+    return view('frontend.pages.proDetail', compact('breadcrumb','product','featureProducts','lastProducts'));
     }
     public function featureProducts($product,$limit)
     {
@@ -87,14 +129,36 @@ class PageController extends Controller
     {
         $marketing = About::where('title','marketing')->first();
         $sales = About::where('title', 'sales manager')->first();
-        return view('frontend.pages.aboutUs', compact('marketing','sales'));
+
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'About Us'
+        ];
+
+        return view('frontend.pages.aboutUs', compact('breadcrumb','marketing','sales'));
     }
     public function contact()
     {
-        return view('frontend.pages.contact');
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'Contact'
+        ];
+
+        return view('frontend.pages.contact', compact('breadcrumb'));
     }
     public function thankYou()
     {
-        return view('frontend.pages.thankYou');
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'Thank You'
+        ];
+
+        return view('frontend.pages.thankYou', compact('breadcrumb'));
     }
 }

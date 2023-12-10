@@ -29,6 +29,6 @@ class CustomAuthController extends Controller
     public function logouts()
     {
         Auth::logout();
-        return redirect()->route('');
+        return redirect()->route('/');
     }
 }

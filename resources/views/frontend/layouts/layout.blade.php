@@ -5,20 +5,28 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
-    <link rel="stylesheet" href="../frontFiles/fonts/icomoon/style.css">
+    <title>{{ $seo['title'] ?? config('app.name') }}</title>
 
-    <link rel="stylesheet" href="../frontFiles/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../frontFiles/css/magnific-popup.css">
-    <link rel="stylesheet" href="../frontFiles/css/jquery-ui.css">
-    <link rel="stylesheet" href="../frontFiles/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="../frontFiles/css/owl.theme.default.min.css">
+    <!--meta-->
+    <meta name="description" content="{{ $seo['description'] ?? '' }}">
+    <meta name="keywords" content="{{ $seo['keywords'] ?? '' }}">
+    <meta name="robots" content="{{ $seo['robots'] ?? '' }}">
+    <meta name="author" content="{{ $seo['author'] ?? '' }}">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
+    <link rel="stylesheet" href="/frontFiles/fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="/frontFiles/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/frontFiles/css/magnific-popup.css">
+    <link rel="stylesheet" href="/frontFiles/css/jquery-ui.css">
+    <link rel="stylesheet" href="/frontFiles/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/frontFiles/css/owl.theme.default.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
 
-    <link rel="stylesheet" href="../frontFiles/css/aos.css">
+    <link rel="stylesheet" href="/frontFiles/css/aos.css">
 
-    <link rel="stylesheet" href="../frontFiles/css/style.css">
+    <link rel="stylesheet" href="/frontFiles/css/style.css">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
@@ -76,10 +84,10 @@
                             @if(!empty($categories) && $categories->count() > 0)
                                 @foreach($categories->where('parent', null) as $category)
                                     <li class="has-children">
-                                        <a href="{{ url('products? category='.$category->slug) }}">{{ $category->name }}</a>
+                                        <a href="{{ url('products/'.$category->slug) }}">{{ $category->name }}</a>
                                         <ul class="dropdown">
                                             @foreach($category->subCategory as $subCategory)
-                                                <li><a href="{{ url('products? category='.$category->slug,$subCategory->slug) }}">{{ $subCategory->name }}</a></li>
+                                                <li><a href="{{ url('products/'.$category->slug,$subCategory->slug) }}">{{ $subCategory->name }}</a></li>
                                             @endforeach
                                         </ul>
                                     </li>
@@ -149,16 +157,16 @@
 
 </div>
 
-<script src="../frontFiles/js/jquery-3.3.1.min.js"></script>
-<script src="../frontFiles/js/jquery-ui.js"></script>
-<script src="../frontFiles/js/popper.min.js"></script>
-<script src="../frontFiles/js/bootstrap.min.js"></script>
-<script src="../frontFiles/js/owl.carousel.min.js"></script>
-<script src="../frontFiles/js/jquery.magnific-popup.min.js"></script>
-<script src="../frontFiles/js/aos.js"></script>
+<script src="/frontFiles/js/jquery-3.3.1.min.js"></script>
+<script src="/frontFiles/js/jquery-ui.js"></script>
+<script src="/frontFiles/js/popper.min.js"></script>
+<script src="/frontFiles/js/bootstrap.min.js"></script>
+<script src="/frontFiles/js/owl.carousel.min.js"></script>
+<script src="/frontFiles/js/jquery.magnific-popup.min.js"></script>
+<script src="/frontFiles/js/aos.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 @yield('custom_js')
-<script src="../frontFiles/js/main.js"></script>
+<script src="/frontFiles/js/main.js"></script>
 
 </body>
 </html>
