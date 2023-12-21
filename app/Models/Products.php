@@ -27,6 +27,10 @@ class Products extends Model
         'status',
         'content',
     ];
+    public function images()
+    {
+        return $this->hasOne(ImageMedia::class,'table_id','id')->where('model_name','Products');
+    }
 
     public function item()
     {

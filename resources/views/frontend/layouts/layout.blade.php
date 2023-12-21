@@ -11,7 +11,7 @@
     <meta name="description" content="{{ $seo['description'] ?? '' }}">
     <meta name="keywords" content="{{ $seo['keywords'] ?? '' }}">
     <meta name="robots" content="{{ $seo['robots'] ?? '' }}">
-    <meta name="author" content="{{ $seo['author'] ?? '' }}">
+    <meta name="author" content="{{ config('app.name') }}">
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
     <link rel="stylesheet" href="/frontFiles/fonts/icomoon/style.css">

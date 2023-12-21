@@ -2,7 +2,6 @@
 
 
 use App\Http\Controllers\AjaxController;
-use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\PageHomeController;
@@ -53,7 +52,5 @@ Route::group(['middleware'=>'site.setting'], function (){
     Route::post('/cart/save', [CartController::class, 'cartSave'])->name('cart.cartSave');
 
     Auth::routes();
-    Route::get('/login',[CustomAuthController::class, 'login'])->name('login');
-
-    Route::get('/logout',[CustomAuthController::class, 'logouts'])->name('logouts');
+    Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 });

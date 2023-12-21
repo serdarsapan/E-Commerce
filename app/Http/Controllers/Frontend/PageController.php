@@ -94,11 +94,24 @@ class PageController extends Controller
 
             $maxPrice = Products::max('price');
 
-    return view('frontend.pages.products', compact('breadcrumb','products','maxPrice','endPrice','sizeLists','colors'));
+        $seoLists = metaCreate($item);
+
+        $seo = [
+            'title' => $seoLists['title'] ?? '',
+            'description' => $seoLists['description'] ?? '',
+            'keywords' => $seoLists['keywords'] ?? '',
+            'image' => asset('img/page-bg.jpg'),
+            'url' => $seoLists['currenturl'],
+            'canonical' => $seoLists['trpage'],
+            'robots' => 'index, follow'
+        ];
+
+    return view('frontend.pages.products', compact('seo','breadcrumb','products','maxPrice','endPrice','sizeLists','colors'));
     }
 
     public function proDetail($slug)
     {
+        $item = request()->segments() ?? null;
     $product = Products::where('slug', $slug)->where('status','1')->firstOrFail();
     $featureProducts = $this->featureProducts($product,5);
         $lastProducts = Products::where('status','1')
@@ -113,8 +126,26 @@ class PageController extends Controller
             ],
             'active'=> 'Product Detail'
         ];
+            if (!empty($product)) {
+                $breadcrumb['pages'][] = [
+                    'link'=> route('products'),
+                    'name'=> $product->category_name
+                ];
+            }
 
-    return view('frontend.pages.proDetail', compact('breadcrumb','product','featureProducts','lastProducts'));
+
+        $seoLists = metaCreate($item);
+        $seo = [
+            'title' => $product->name ?? '',
+            'description' => $seoLists['description'] ?? '',
+            'keywords' => $seoLists['keywords'] ?? '',
+            'image' => asset('img/page-bg.jpg'),
+            'url' => $seoLists['currenturl'],
+            'canonical' => $seoLists['trpage'],
+            'robots' => 'index, follow'
+        ];
+
+    return view('frontend.pages.proDetail', compact('seo','breadcrumb','product','featureProducts','lastProducts'));
     }
     public function featureProducts($product,$limit)
     {
@@ -137,7 +168,19 @@ class PageController extends Controller
             'active'=> 'About Us'
         ];
 
-        return view('frontend.pages.aboutUs', compact('breadcrumb','marketing','sales'));
+        $seoLists = metaCreate('aboutUs');
+
+        $seo = [
+            'title' => $seoLists['title'] ?? '',
+            'description' => $seoLists['description'] ?? '',
+            'keywords' => $seoLists['keywords'] ?? '',
+            'image' => asset('img/page-bg.jpg'),
+            'url' => $seoLists['currenturl'],
+            'canonical' => $seoLists['trpage'],
+            'robots' => 'index, follow'
+        ];
+
+        return view('frontend.pages.aboutUs', compact('seo','breadcrumb','marketing','sales'));
     }
     public function contact()
     {
@@ -148,7 +191,19 @@ class PageController extends Controller
             'active'=> 'Contact'
         ];
 
-        return view('frontend.pages.contact', compact('breadcrumb'));
+        $seoLists = metaCreate('contact');
+
+        $seo = [
+            'title' => $seoLists['title'] ?? '',
+            'description' => $seoLists['description'] ?? '',
+            'keywords' => $seoLists['keywords'] ?? '',
+            'image' => asset('img/page-bg.jpg'),
+            'url' => $seoLists['currenturl'],
+            'canonical' => $seoLists['trpage'],
+            'robots' => 'index, follow'
+        ];
+
+        return view('frontend.pages.contact', compact('seo','breadcrumb'));
     }
     public function thankYou()
     {

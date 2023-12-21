@@ -23,6 +23,14 @@ if (!function_exists('fileDel')) {
     }
 }
 
+if (!function_exists('openFile')) {
+    function openFile($filePath, $permissions = 0777) {
+        if (!file_exists($filePath)) {
+            mkdir($filePath, $permissions, true);
+        }
+    }
+}
+
 if (!function_exists('imgUpload')) {
     function imgUpload($image,$name,$path) {
         $extension = $image->getClientOriginalExtension();
@@ -62,15 +70,34 @@ if (!function_exists('encrypt')) {
 }
 
 if (!function_exists('decrypt')) {
-    function decrypt($string) {
+    function decrypt($string)
+    {
         return decrypt($string);
     }
+}
 
+if (!function_exists('special_path')) {
+    function special_path($lang=null,$url=null)
+    {
+        if (!empty($lang) && $lang != 'en') {
+            $langLink = $lang.'.';
+        }else {
+            $langLink = env('APP_ENV') == 'local' ? '' : 'www.';
+        }
+        if (!empty($url)) {
+            $urlLink = '/'.$url;
+        }else {
+            $urlLink = '';
+        }
+        return config('app.app_ssl').$langLink.config('app.url').$urlLink;
+    }
+}
 
-    if (!function_exists('metacreate')) {
-        function metacreate($page)
+    if (!function_exists('metaCreate')) {
+        function metaCreate($page)
+
         {
-            $pageseo = PageSeo::where('page', $page)->with(['images','pages'])->first();
+            $pageseo = \App\Models\PageSeo::where('page', $page)->with(['images', 'pages'])->first();
 
             $metas = [];
             $title = $pageseo->title;
@@ -79,10 +106,10 @@ if (!function_exists('decrypt')) {
             $currenturl = special_path(app()->getLocale(), $pageseo->page);
 
             foreach ($pageseo->pages as $pg) {
-                $seourl =  special_path($pg->lang, $pg->page);
+                $seourl = special_path($pg->lang, $pg->page);
                 if ($pg->lang !== app()->getLocale()) {
                     $metas[] = $seourl;
-                }else {
+                } else {
                     $title = $pg->title;
                     $description = $pg->description;
                     $keywords = $pg->keywords;
@@ -92,7 +119,7 @@ if (!function_exists('decrypt')) {
 
             $seoimg = collect($pageseo->images->data ?? '');
             $bgimg = $seoimg->sortByDesc('glassCase')->first()['image'] ?? '';
-            $enpage = special_path('en', $pageseo->page);
+            $trpage = special_path('tr', $pageseo->page);
 
             $seoLists = [
                 'title' => $title,
@@ -101,11 +128,61 @@ if (!function_exists('decrypt')) {
                 'currenturl' => $currenturl,
                 'metas' => $metas,
                 'bgimg' => $bgimg,
-                'enpage' => $enpage,
+                'trpage' => $trpage,
             ];
 
             return $seoLists;
         }
     }
+
+if (!function_exists('imageUpload')) {
+    function imageUpload($image,$path,$pathThumb=NULL,$with=NULL,$height=NULL)
+    {
+
+        $fullName = $image->getClientOriginalName();
+        $extension = $image->getClientOriginalExtension();
+        $onlyName = implode('', explode('.' . $extension, $fullName));
+        $filename =  Str::slug($onlyName) . '-' . time(); //generateOTP(6).'-'.time();
+
+        if ($image->extension() == 'svg' || $image->extension() == 'webp' || $image->extension() == 'pdf' || $image->extension() == 'ico') {
+            $orjiUrl = $path . $filename . '.' . $image->extension();
+
+
+            \Illuminate\Support\Facades\Storage::disk('public')->putFileAs('',$image->path(), $orjiUrl);
+
+            $imagear['orj'] = $orjiUrl;
+
+            if(!empty($paththumb)) {
+                $thumbUrl = $orjiUrl;
+                $imagear['thum'] = $thumbUrl;
+            }else {
+                $imagear['thum'] = NULL;
+            }
+
+        } else {
+            $orjiUrl = $path . $filename . '.webp';
+            \Illuminate\Support\Facades\Storage::disk('public')->put($orjiUrl, \ImageResize::make($image->path())->encode('webp', 90));
+
+            $imagear['orj'] = $orjiUrl;
+
+            if(!empty($pathThumb)) {
+
+                $thumbUrl = $pathThumb . 'thumb_' . $filename . '.webp';
+                \Illuminate\Support\Facades\Storage::disk('public')->put($thumbUrl, \ImageResize::make($image->path())
+                    ->resize($with, $height, function ($constraint) {$constraint->aspectRatio();})
+                    ->encode('webp', 90));
+
+                $imagear['thum'] = $thumbUrl;
+            }else {
+                $imagear['thum'] = NULL;
+            }
+
+
+        }
+
+        return  $imagear;
+    }
 }
+
+
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Products;
 use App\Models\Slider;
+use App\Models\PageSeo;
 
 class PageHomeController extends Controller
 {
@@ -19,6 +20,19 @@ class PageHomeController extends Controller
             ->limit(10)
             ->get();
 
-        return view('frontend.pages.index', compact('slider','lastProducts'));
+
+        $seoLists = metaCreate('');
+
+        $seo = [
+            'title' => $seoLists['title'] ?? '',
+            'description' => $seoLists['description'] ?? '',
+            'keywords' => $seoLists['keywords'] ?? '',
+            'image' => asset('img/page-bg.jpg'),
+            'url' => $seoLists['currenturl'],
+            'canonical' => $seoLists['trpage'],
+            'robots' => 'index, follow'
+        ];
+
+        return view('frontend.pages.index', compact('seo','slider','lastProducts'));
     }
 }

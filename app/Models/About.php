@@ -15,4 +15,9 @@ class About extends Model
         'title',
         'content',
     ];
+
+    public function images()
+    {
+        return $this->hasOne(ImageMedia::class,'table_id','id')->where('model_name','About');
+    }
 }
