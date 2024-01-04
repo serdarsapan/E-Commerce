@@ -1,2 +1,2 @@
 [build.environment]
-  PHP_VERSION = "^8.1"  # Specify the PHP version for deployment
+  PHP_VERSION = "8.2"  # Specify the PHP version for deployment
